@@ -23,4 +23,9 @@
     <attr name="nnf_separator_color" format="color"/>
     <!-- Drawable to use as a divider between list items (optional) -->
     <attr name="nnf_list_item_divider" format="reference"/>
+
+    <declare-styleable name="SeekBarWithTicks">
+        <attr name="dots_positions" format="reference"/>
+        <attr name="dots_drawable" format="reference"/>
+    </declare-styleable>
 </resources>

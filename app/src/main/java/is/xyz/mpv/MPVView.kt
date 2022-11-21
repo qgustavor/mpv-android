@@ -194,6 +194,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             Property("video-params"),
             Property("playlist-pos", MPV_FORMAT_INT64),
             Property("playlist-count", MPV_FORMAT_INT64),
+            Property("chapter", MPV_FORMAT_INT64),
+            Property("chapters", MPV_FORMAT_INT64),
             Property("video-format"),
             Property("media-title", MPV_FORMAT_STRING),
             Property("metadata/by-key/Artist", MPV_FORMAT_STRING),
@@ -310,7 +312,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val videoAspect: Double?
         get() = MPVLib.getPropertyDouble("video-params/aspect")
 
-    class TrackDelegate {
+    class TrackDelegate() {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
             val v = MPVLib.getPropertyString(property.name)
             // we can get null here for "no" or other invalid value
@@ -324,9 +326,24 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         }
     }
 
+    class SecondarySidTrackDelegate() {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
+            val v = MPVLib.getPropertyString("secondary-sid")
+            // we can get null here for "no" or other invalid value
+            return v?.toIntOrNull() ?: -1
+        }
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
+            if (value == -1)
+                MPVLib.setPropertyString("secondary-sid", "no")
+            else
+                MPVLib.setPropertyInt("secondary-sid", value)
+        }
+    }
+
     var vid: Int by TrackDelegate()
     var sid: Int by TrackDelegate()
     var aid: Int by TrackDelegate()
+    var secondarySid: Int by SecondarySidTrackDelegate()
 
     // Commands
 
